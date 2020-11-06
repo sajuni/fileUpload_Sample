@@ -59,11 +59,13 @@ small {
 				console.log(checkImageType(data));
 				
 				if(checkImageType(data)){
-					str ="<div>"
-						+"<img src='displayFile?fileName="+getImageLink(data)+"'/>"
-						+data+"</div>";
+					str ="<div><a href=displayFile?fileName="+getImageLink(data)+">"
+						+"<img src='displayFile?fileName="+data+"'/>"
+						+"</a><small data-src="+ data +">X</small></div>";
 					}else{
-					str = "<div><a href='displayFile?fileName=" + data +"'>" +getOriginalName(data)+"</a></div>";
+					str = "<div><a href='displayFile?fileName=" + data +"'>" 
+					+getOriginalName(data)+"</a>"
+					+"<small data-src="+data+">X</small></div></div>";
 				}
 				
 				$(".uploadedList").append(str);
@@ -85,6 +87,7 @@ small {
 		return fileName.substr(idx);
 	}
 
+	// 이미지 파일 이름을 날짜 빼고 리턴
 	function getImageLink(fileName){
 		if(!checkImageType(fileName)) {
 			return;
@@ -96,6 +99,23 @@ small {
 		console.log('end',end)
 		return front + end;		
 	}
+
+	$(".uploadedList").on("click", "small", function(event){
+		var that = $(this);
+
+		$.ajax({
+			url:"deleteFile",
+			type:"post",
+			data: {fileName:$(this).attr("data-src")},
+			dataType:"text",
+			success:function(result) {
+				if(result == 'deleted') {
+						alert("deleted");
+						that.parent("div").remove();
+					}
+				}
+			});
+		});
 	
 	</script>
 </body>
